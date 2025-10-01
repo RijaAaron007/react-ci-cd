@@ -1,23 +1,30 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from "@eslint/js";
+import globals from "globals";
+import pluginImport from "eslint-plugin-import";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 
-export default defineConfig([
-  globalIgnores(['dist']),
+export default [
+  { ignores: ["dist/**", "build/**", "coverage/**", "node_modules/**"] },
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
+    files: ["src/**/*.{js,jsx}"],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: 2023,
+      sourceType: "module",
+      globals: { ...globals.browser }
     },
-  },
-])
+    plugins: {
+      import: pluginImport,
+      react,
+      "react-hooks": reactHooks
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      "react/jsx-uses-react": "off",
+      "react/react-in-jsx-scope": "off",
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      "import/order": ["warn", { "newlines-between": "always" }]
+    }
+  }
+];
